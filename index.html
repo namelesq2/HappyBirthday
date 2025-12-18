@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поздравление для Маши ❤️</title>
+    <title>С днём рождения, Маша ❤️</title>
     <style>
         body {
             margin: 0;
@@ -44,7 +44,6 @@
             display: none;
         }
 
-        /* Частицы */
         .particle {
             position: absolute;
             width: 30px;
@@ -62,7 +61,6 @@
             100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Кнопки чисел */
         .number-buttons {
             display: flex;
             justify-content: center;
@@ -87,7 +85,6 @@
             transform: scale(1.2);
         }
 
-        /* Игра со словом */
         .letter-options {
             display: flex;
             justify-content: center;
@@ -162,8 +159,9 @@
     <div id="container">
         <div id="intro-message" class="message visible">Это поздравление для тебя, Маша ❤️</div>
 
-        <div id="tap-prompt" class="message hidden">Нажми в любую точку экрана, солнышко ✨</div><div id="number-game" class="hidden">
-            <div class="message visible">Угадай, какое число сегодня самое важное для тебя? 💕</div>
+        <div id="tap-prompt" class="message hidden">Нажми в любую точку экрана, солнышко ✨</div>
+
+        <div id="number-game" class="hidden"><div class="message visible">Угадай, какое число сегодня самое важное для тебя? 💕</div>
             <div class="number-buttons">
                 <button class="number-button" data-value="100">100</button>
                 <button class="number-button" data-value="6">6</button>
@@ -204,14 +202,13 @@
     </div>
 
     <script>
-        // Сердечки всегда на фоне
         function createParticles(type, count) {
             for (let i = 0; i < count; i++) {
                 const p = document.createElement('div');
                 p.classList.add('particle');
-                p.style.left = ${Math.random() * 100}vw;
-                p.style.animationDuration = ${Math.random() * 8 + 8}s;
-                p.style.animationDelay = ${Math.random() * 6}s;
+                p.style.left = `${Math.random() * 100}vw`;
+                p.style.animationDuration = `${Math.random() * 8 + 8}s`;
+                p.style.animationDelay = `${Math.random() * 6}s`;
                 p.style.backgroundImage = type === 'flower'
                     ? 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'40\' fill=\'%23ff4081\'/%3E%3C/svg%3E")'
                     : 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Cpath d=\'M50 90 C20 60 0 30 50 10 C100 30 80 60 50 90\' fill=\'%23f44336\'/%3E%3C/svg%3E")';
@@ -221,7 +218,6 @@
 
         createParticles('heart', 30);
 
-        // Элементы
         const intro = document.getElementById('intro-message');
         const tapPrompt = document.getElementById('tap-prompt');
         const numberGame = document.getElementById('number-game');
@@ -233,26 +229,28 @@
         const wordFeedback = document.getElementById('word-feedback');
         const correctWord = document.getElementById('correct-word-message');
         const finalHeart = document.getElementById('final-heart');
-            // === ИСПРАВЛЕННЫЙ СТАРТ ===
+
+        // Правильный старт
         setTimeout(() => {
-            intro.classList.remove('visible'); // Начинаем исчезновение
+            intro.classList.remove('visible');
             setTimeout(() => {
-                intro.classList.add('hidden'); // Полностью скрываем intro
+                intro.classList.add('hidden');
                 tapPrompt.classList.remove('hidden');
                 tapPrompt.classList.add('visible');
-                document.body.addEventListener('click', startNumberGame, { once: true });
-            }, 1500); // Ждём окончания анимации исчезновения
-        }, 5000); // 5 секунд показа intro
-        function startNumberGame() {tapPrompt.classList.remove('visible');
-            setTimeout(() => {
-                tapPrompt.classList.add('hidden');
+                document.body.onclick = startNumberGame; // один раз
+            }, 1500);
+        }, 5000);
+
+        function startNumberGame() {
+            tapPrompt.classList.remove('visible');
+            setTimeout(() => {tapPrompt.classList.add('hidden');
                 numberGame.classList.remove('hidden');
             }, 1500);
         }
 
-        // 2. Игра с числами
+        // Игра с числами
         document.querySelectorAll('.number-button').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.onclick = () => {
                 if (btn.dataset.value === '18') {
                     numberGame.classList.add('hidden');
                     correctNumber.classList.remove('hidden');
@@ -268,19 +266,18 @@
                         numberFeedback.textContent = '';
                     }, 2500);
                 }
-            });
+            };
         });
 
-        // 3. Первое поздравление по словам + цветочки
         function showFirstCongrats() {
             correctNumber.classList.remove('visible');
             setTimeout(() => {
                 correctNumber.classList.add('hidden');
-                const text = "Маша, поздравляю тебя с днём рождения!\nЭто особенный день для тебя и для твоих родных.\nТебе исполняется сегодня 18 лет)\nТы уже очень взрослая девочка и теперь сама принимаешь каждое своё решение ❤️\nP.S. остальные слова — в письме)";
                 firstCongrats.classList.remove('hidden');
                 firstCongrats.classList.add('visible');
                 firstCongrats.innerHTML = '';
 
+                const text = "Маша, поздравляю тебя с днём рождения!\nЭто особенный день для тебя и для твоих родных.\nТебе исполняется сегодня 18 лет)\nТы уже очень взрослая девочка и теперь сама принимаешь каждое своё решение ❤️\nP.S. остальные слова — в письме)";
                 const lines = text.split('\n');
                 let i = 0;
                 const interval = setInterval(() => {
@@ -292,28 +289,25 @@
                         createParticles('flower', 40);
                         setTimeout(() => {
                             firstCongrats.classList.remove('visible');
-                            setTimeout(showSecondCongrats, 1500);
+                            setTimeout(() => {
+                                firstCongrats.classList.add('hidden');
+                                secondCongrats.classList.remove('hidden');
+                                secondCongrats.classList.add('visible');
+                                setTimeout(() => {
+                                    secondCongrats.classList.remove('visible');
+                                    setTimeout(() => {
+                                        secondCongrats.classList.add('hidden');
+                                        wordGame.classList.remove('hidden');
+                                    }, 1500);
+                                }, 15000);
+                            }, 1500);
                         }, 15000);
                     }
                 }, 800);
             }, 1500);
         }
 
-        // 4. Второе поздравление
-        function showSecondCongrats() {
-            firstCongrats.classList.add('hidden');
-            secondCongrats.classList.remove('hidden');
-            secondCongrats.classList.add('visible');
-            setTimeout(() => {
-                secondCongrats.classList.remove('visible');
-                setTimeout(() => {
-                    secondCongrats.classList.add('hidden');
-                    wordGame.classList.remove('hidden');
-                }, 1500);
-            }, 15000);
-        }
-
-        // 5. Игра со словом
+        // Игра со словом
         const lettersDiv = document.getElementById('letters');
         const slotsDiv = document.getElementById('slots');
         const slots = [];
@@ -332,7 +326,6 @@
             el.textContent = l;
             el.draggable = true;
             lettersDiv.appendChild(el);
-
             el.addEventListener('dragstart', e => e.dataTransfer.setData('text', l));
         });
 
@@ -340,8 +333,7 @@
             slot.addEventListener('dragover', e => e.preventDefault());
             slot.addEventListener('drop', e => {
                 e.preventDefault();
-                const letter = e.dataTransfer.getData('text');
-                if (!slot.textContent) {
+                const letter = e.dataTransfer.getData('text');if (!slot.textContent) {
                     slot.textContent = letter;
                     slot.classList.add('filled');
                 }
@@ -377,5 +369,3 @@
     </script>
 </body>
 </html>
-
-
