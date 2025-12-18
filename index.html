@@ -31,7 +31,10 @@ body {
     transition: opacity 1s ease;
 }
 
-.big { font-size: 32px; font-weight: bold; }
+.big {
+    font-size: 32px;
+    font-weight: bold;
+}
 
 .buttons {
     display: flex;
@@ -52,10 +55,15 @@ body {
     transition: all .3s;
 }
 
-.btn:hover { background: #ff2e63; color: white; }
+.btn.wrong {
+    background: #ff6b6b;
+    color: white;
+}
 
-.btn.wrong { background: #ff6b6b; color: white; }
-.btn.correct { background: #4cd137; color: white; }
+.btn.correct {
+    background: #4cd137;
+    color: white;
+}
 
 .heart {
     position: absolute;
@@ -103,7 +111,7 @@ body {
     font-size: 30px;
     line-height: 55px;
     color: #ff2e63;
-    cursor: grab;
+    cursor: pointer;
 }
 
 #bigHeart {
@@ -119,8 +127,9 @@ body {
 
 <script>
 const container = document.getElementById("container");
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
-// сердечки всегда
+// фоновые сердечки
 setInterval(() => {
     const h = document.createElement("div");
     h.className = "heart";
@@ -131,17 +140,15 @@ setInterval(() => {
     setTimeout(() => h.remove(), 8000);
 }, 500);
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
-
 async function showText(text, big=false) {
     container.innerHTML = "";
-    const t = document.createElement("div");
-    t.className = "text" + (big ? " big" : "");
-    t.innerHTML = text;
-    container.appendChild(t);
+    const el = document.createElement("div");
+    el.className = "text" + (big ? " big" : "");
+    el.innerHTML = text;
+    container.appendChild(el);
     await wait(100);
-    t.style.opacity = 1;
-    return t;
+    el.style.opacity = 1;
+    return el;
 }
 
 async function numberGame() {
@@ -165,9 +172,6 @@ async function numberGame() {
                     resolve();
                 } else {
                     b.classList.add("wrong");
-                    await showText("Нет, не верно 🙂 Подумай ещё");
-                    await wait(1500);
-                    numberGame().then(resolve);
                 }
             };
             box.appendChild(b);
@@ -175,8 +179,30 @@ async function numberGame() {
     });
 }
 
+async function mainText() {
+    const t1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и для твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";
+    await typeByWords(t1);
+    await wait(15000);
+
+    const t2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
+    await typeByWords(t2, true);
+    await wait(15000);
+}
+
+async function typeByWords(text, big=false) {container.innerHTML = "";
+    const el = document.createElement("div");
+    el.className = "text" + (big ? " big" : "");
+    container.appendChild(el);
+    el.style.opacity = 1;
+
+    for (let w of text.split(" ")) {
+        el.innerHTML += w + " ";
+        await wait(250);
+    }
+}
+
 async function wordGame() {
-    await showText("А теперь угадай слово 💌", true);
+    await showText("Угадай слово 💌", true);
 
     const word = "МАША";
     const letters = ["Ш","Ц","Р","А","З","М","Я"];
@@ -184,8 +210,10 @@ async function wordGame() {
     container.innerHTML += `
         <div class="word-box">${"<div class='slot'></div>".repeat(5)}</div>
         <div class="letters"></div>
-    `;const slots = document.querySelectorAll(".slot");
-    const lettersBox = document.querySelector(".letters");
+    `;
+
+    const slots = document.querySelectorAll(".slot");
+    const box = document.querySelector(".letters");
 
     letters.forEach(l => {
         const el = document.createElement("div");
@@ -198,11 +226,9 @@ async function wordGame() {
                     break;
                 }
             }
-            if ([...slots].map(s=>s.innerText).join("") === word) {
-                finish();
-            }
+            if ([...slots].map(s=>s.innerText).join("") === word) finish();
         };
-        lettersBox.appendChild(el);
+        box.appendChild(el);
     });
 }
 
@@ -218,53 +244,12 @@ async function start() {
     await showText("Это поздравление для тебя, Маша ❤️", true);
     await wait(5000);
     await showText("Нажми в любую точку экрана");
+
     document.body.onclick = async () => {
         document.body.onclick = null;
         await numberGame();
-
-// ПЕРВЫЙ БОЛЬШОЙ ТЕКСТ
-await showText("", false);
-const msg1 = document.createElement("div");
-msg1.className = "text";
-container.innerHTML = "";
-container.appendChild(msg1);
-msg1.style.opacity = 1;
-
-const text1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и для твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";
-const words1 = text1.split(" ");
-msg1.innerHTML = "";
-
-for (let w of words1) {
-    msg1.innerHTML += w + " ";
-    await wait(250);
-}
-
-await wait(15000);
-msg1.style.opacity = 0;
-await wait(1500);
-
-// ВТОРОЙ ТЕКСТ
-container.innerHTML = "";
-const msg2 = document.createElement("div");
-msg2.className = "text big";
-container.appendChild(msg2);
-msg2.style.opacity = 1;
-
-const text2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
-const words2 = text2.split(" ");
-msg2.innerHTML = "";
-
-for (let w of words2) {
-    msg2.innerHTML += w + " ";
-    await wait(250);
-}
-
-await wait(15000);
-msg2.style.opacity = 0;
-await wait(1500);
-
-// ИГРА СЛОВО
-await wordGame();
+        await mainText();
+        await wordGame();
     };
 }
 
