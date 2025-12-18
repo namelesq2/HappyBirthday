@@ -236,14 +236,16 @@
 
         // 1. Intro → Tap prompt
         setTimeout(() => {
-            intro.classList.remove('visible');
+            // === ИСПРАВЛЕННЫЙ СТАРТ ===
+        setTimeout(() => {
+            intro.classList.remove('visible'); // Начинаем исчезновение
             setTimeout(() => {
+                intro.classList.add('hidden'); // Полностью скрываем intro
                 tapPrompt.classList.remove('hidden');
                 tapPrompt.classList.add('visible');
                 document.body.addEventListener('click', startNumberGame, { once: true });
-            }, 1500);
-        }, 5000);
-
+            }, 1500); // Ждём окончания анимации исчезновения
+        }, 5000); // 5 секунд показа intro
         function startNumberGame() {tapPrompt.classList.remove('visible');
             setTimeout(() => {
                 tapPrompt.classList.add('hidden');
@@ -378,3 +380,4 @@
     </script>
 </body>
 </html>
+
