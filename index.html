@@ -329,7 +329,54 @@
             el.textContent = l;
             el.draggable = true;
             lettersDiv.appendChild(el);
-            el.addEventListener('dragstart', e => e.dataTransfer.setData('text', l));
+
+            // Для мыши (компьютер)
+            el.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text', l);
+            });
+
+            // Для touch (телефон) — имитация перетаскивания пальцем
+            let touchStartX, touchStartY;
+            el.addEventListener('touchstart', e => {
+                e.preventDefault(); // Чтобы не скроллило страницу
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                el.style.transition = 'none';
+                el.style.zIndex = '1000';
+                el.style.opacity = '0.8';
+            });
+
+            el.addEventListener('touchmove', e => {
+                if (e.touches.length === 1) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    el.style.position = 'fixed';
+                    el.style.left = (touch.clientX - el.offsetWidth / 2) + 'px';
+                    el.style.top = (touch.clientY - el.offsetHeight / 2) + 'px';
+                    el.style.pointerEvents = 'none'; // Чтобы не мешал дропу
+                }
+            });
+
+            el.addEventListener('touchend', e => {
+                el.style.transition = '';
+                el.style.position = '';
+                el.style.left = '';
+                el.style.top = '';
+                el.style.zIndex = '';
+                el.style.opacity = '';
+                el.style.pointerEvents = '';
+
+                // Определяем, над каким слотом отпустили
+                const touch = e.changedTouches[0];
+                const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+                const slot = dropZone.closest('.slot');
+
+                if (slot && !slot.textContent) {
+                    slot.textContent = l;
+                    slot.classList.add('filled');
+                }
+            });
         });
 
         slots.forEach(slot => {
@@ -373,3 +420,4 @@
     </script>
 </body>
 </html>
+
