@@ -171,15 +171,15 @@
             for (let i = 0; i < count; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                particle.style.left = ${Math.random() * 100}vw;
-                particle.style.top = ${-20}px; // Начать сверху
-                particle.style.animation = fall ${Math.random() * 5 + 5}s linear infinite;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${-20}px`; // Начать сверху
+                particle.style.animation = `fall ${Math.random() * 5 + 5}s linear infinite`;
                 particle.style.backgroundImage = type === 'flower' ? 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'40\' fill=\'pink\'/%3E%3C/svg%3E")' : 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Cpath d=\'M50 90 C20 60 0 30 50 10 C100 30 80 60 50 90\' fill=\'red\'/%3E%3C/svg%3E")';
                 container.appendChild(particle);
 
                 // Анимация падения
                 const style = document.createElement('style');
-                style.innerHTML = @keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(${Math.random() * 360}deg); } };
+                style.innerHTML = `@keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(${Math.random() * 360}deg); } }`;
                 document.head.appendChild(style);
             }
         }
@@ -364,3 +364,4 @@
     </script>
 </body>
 </html>
+
