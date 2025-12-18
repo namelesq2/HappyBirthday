@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Для Маши ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    background: #fff0f5;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    text-align: center;
+}
+
+#container {
+    z-index: 2;
+    padding: 20px;
+}
+
+.text {
+    color: #ff2e63;
+    font-size: 26px;
+    line-height: 1.6;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.big { font-size: 32px; font-weight: bold; }
+
+.buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 15px 22px;
+    font-size: 22px;
+    border-radius: 15px;
+    background: white;
+    border: 2px solid #ff2e63;
+    color: #ff2e63;
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.btn:hover { background: #ff2e63; color: white; }
+
+.btn.wrong { background: #ff6b6b; color: white; }
+.btn.correct { background: #4cd137; color: white; }
+
+.heart {
+    position: absolute;
+    top: -40px;
+    font-size: 26px;
+    animation: fall 6s linear infinite;
+    opacity: .6;
+}
+
+@keyframes fall {
+    from { transform: translateY(0); }
+    to { transform: translateY(120vh); }
+}
+
+.word-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.slot {
+    width: 55px;
+    height: 55px;
+    border: 2px dashed #ff2e63;
+    border-radius: 10px;
+    font-size: 30px;
+    line-height: 55px;
+    color: #ff2e63;
+}
+
+.letters {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.letter {
+    width: 55px;
+    height: 55px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #ff2e63;
+    font-size: 30px;
+    line-height: 55px;
+    color: #ff2e63;
+    cursor: grab;
+}
+
+#bigHeart {
+    font-size: 120px;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+</style>
+</head>
+
+<body>
+<div id="container"></div>
+
+<script>
+const container = document.getElementById("container");
+
+// сердечки всегда
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.animationDuration = 4 + Math.random() * 4 + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+}, 500);
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+async function showText(text, big=false) {
+    container.innerHTML = "";
+    const t = document.createElement("div");
+    t.className = "text" + (big ? " big" : "");
+    t.innerHTML = text;
+    container.appendChild(t);
+    await wait(100);
+    t.style.opacity = 1;
+    return t;
+}
+
+async function numberGame() {
+    await showText("Угадай правильное число 💭", true);
+
+    const nums = [100, 6, 18, 78];
+    const box = document.createElement("div");
+    box.className = "buttons";
+    container.appendChild(box);
+
+    return new Promise(resolve => {
+        nums.forEach(n => {
+            const b = document.createElement("div");
+            b.className = "btn";
+            b.innerText = n;
+            b.onclick = async () => {
+                if (n === 18) {
+                    b.classList.add("correct");
+                    await showText("Да, ты абсолютно права 💖 Именно 18 — верный выбор!");
+                    await wait(2500);
+                    resolve();
+                } else {
+                    b.classList.add("wrong");
+                    await showText("Нет, не верно 🙂 Подумай ещё");
+                    await wait(1500);
+                    numberGame().then(resolve);
+                }
+            };
+            box.appendChild(b);
+        });
+    });
+}
+
+async function wordGame() {
+    await showText("А теперь угадай слово 💌", true);
+
+    const word = "МАША";
+    const letters = ["Ш","Ц","Р","А","З","М","Я"];
+
+    container.innerHTML += `
+        <div class="word-box">${"<div class='slot'></div>".repeat(5)}</div>
+        <div class="letters"></div>
+    `;const slots = document.querySelectorAll(".slot");
+    const lettersBox = document.querySelector(".letters");
+
+    letters.forEach(l => {
+        const el = document.createElement("div");
+        el.className = "letter";
+        el.innerText = l;
+        el.onclick = () => {
+            for (let s of slots) {
+                if (!s.innerText) {
+                    s.innerText = l;
+                    break;
+                }
+            }
+            if ([...slots].map(s=>s.innerText).join("") === word) {
+                finish();
+            }
+        };
+        lettersBox.appendChild(el);
+    });
+}
+
+async function finish() {
+    await showText("Да, ты права, Маша ❤️", true);
+    await wait(3000);
+    container.innerHTML = <div id="bigHeart">❤️</div>;
+    await wait(200);
+    document.getElementById("bigHeart").style.opacity = 1;
+}
+
+async function start() {
+    await showText("Это поздравление для тебя, Маша ❤️", true);
+    await wait(5000);
+    await showText("Нажми в любую точку экрана");
+    document.body.onclick = async () => {
+        document.body.onclick = null;
+        await numberGame();
+
+// ПЕРВЫЙ БОЛЬШОЙ ТЕКСТ
+await showText("", false);
+const msg1 = document.createElement("div");
+msg1.className = "text";
+container.innerHTML = "";
+container.appendChild(msg1);
+msg1.style.opacity = 1;
+
+const text1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и для твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";
+const words1 = text1.split(" ");
+msg1.innerHTML = "";
+
+for (let w of words1) {
+    msg1.innerHTML += w + " ";
+    await wait(250);
+}
+
+await wait(15000);
+msg1.style.opacity = 0;
+await wait(1500);
+
+// ВТОРОЙ ТЕКСТ
+container.innerHTML = "";
+const msg2 = document.createElement("div");
+msg2.className = "text big";
+container.appendChild(msg2);
+msg2.style.opacity = 1;
+
+const text2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
+const words2 = text2.split(" ");
+msg2.innerHTML = "";
+
+for (let w of words2) {
+    msg2.innerHTML += w + " ";
+    await wait(250);
+}
+
+await wait(15000);
+msg2.style.opacity = 0;
+await wait(1500);
+
+// ИГРА СЛОВО
+await wordGame();
+    };
+}
+
+start();
+</script>
+</body>
+</html>
