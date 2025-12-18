@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поздравление для Маши ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #ffebee;
+            font-family: 'Arial', sans-serif;
+            color: #d32f2f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            position: relative;
+        }
+
+        #container {
+            position: relative;
+            z-index: 2;
+            max-width: 90%;
+        }
+
+        .message {
+            font-size: 26px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .message.visible {
+            opacity: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Частицы */
+        .particle {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Кнопки чисел */
+        .number-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .number-button {
+            padding: 15px 30px;
+            font-size: 28px;
+            background-color: #f48fb1;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .number-button.wrong {
+            background-color: #ff5252;
+            transform: scale(1.1);
+        }
+
+        /* Игра со словом */
+        .letter-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .letter {
+            width: 60px;
+            height: 60px;
+            background-color: #f48fb1;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .word-slots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .slot {
+            width: 60px;
+            height: 60px;
+            border: 3px dashed #d32f2f;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: #d32f2f;
+        }
+
+        .slot.filled {
+            border-style: solid;
+            background-color: #fff0f5;
+        }
+
+        #final-heart {
+            font-size: 200px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        #final-heart.visible {
+            opacity: 1;
+        }
+
+        .feedback {
+            font-size: 22px;
+            min-height: 50px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="intro-message" class="message">Это поздравление для тебя, Маша ❤️</div>
+        <div id="tap-prompt" class="message hidden">Нажми в любую точку экрана, солнышко ✨</div>
+
+        <div id="number-game" class="hidden">
+            <div class="message">Угадай, какое число сегодня самое важное для тебя? 💕</div><div class="number-buttons">
+                <button class="number-button" data-value="100">100</button>
+                <button class="number-button" data-value="6">6</button>
+                <button class="number-button" data-value="18">18</button>
+                <button class="number-button" data-value="78">78</button>
+            </div>
+            <div id="number-feedback" class="feedback message"></div>
+        </div>
+
+        <div id="correct-number-message" class="message hidden">
+            Да, ты абсолютно права! ❤️<br>
+            Именно число 18 — самое важное сегодня...<br>
+            Потому что тебе исполняется 18 лет, моя взрослая девочка!
+        </div>
+
+        <div id="first-congrats" class="message hidden"></div>
+
+        <div id="second-congrats" class="message hidden">
+            Маша, спасибо тебе за всё, ты очень хорошая девочка,<br>
+            я тебя очень сильно люблю ❤️
+        </div>
+
+        <div id="word-game" class="hidden">
+            <div class="message">А теперь собери самое важное для меня слово из букв... 💌</div>
+            <div class="letter-options" id="letters"></div>
+            <div class="word-slots" id="slots"></div>
+            <button id="check-word" class="number-button" style="margin-top: 20px; padding: 12px 30px;">Проверить</button>
+            <div id="word-feedback" class="feedback message"></div>
+        </div>
+
+        <div id="correct-word-message" class="message hidden">
+            Да, ты права, Маша! ❤️<br>
+            Это твоё прекрасное имя...<br>
+            Самое любимое слово на свете для меня
+        </div>
+
+        <div id="final-heart" class="hidden">❤️</div>
+    </div>
+
+    <script>
+        // Сердечки на фоне всегда
+        function createParticles(type, count) {
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = `${Math.random() * 100}vw`;
+                p.style.animationDuration = `${Math.random() * 6 + 6}s`;
+                p.style.animationDelay = `${Math.random() * 5}s`;
+                p.style.backgroundImage = type === 'flower'
+                    ? 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'40\' fill=\'%23ff4081\'/%3E%3C/svg%3E")'
+                    : 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Cpath d=\'M50 90 C20 60 0 30 50 10 C100 30 80 60 50 90\' fill=\'%23f44336\'/%3E%3C/svg%3E")';
+                document.body.appendChild(p);
+            }
+        }
+
+        createParticles('heart', 25);
+
+        // Элементы
+        const introMessage = document.getElementById('intro-message');
+        const tapPrompt = document.getElementById('tap-prompt');
+        const numberGame = document.getElementById('number-game');
+        const numberFeedback = document.getElementById('number-feedback');
+        const correctNumberMessage = document.getElementById('correct-number-message');
+        const firstCongrats = document.getElementById('first-congrats');
+        const secondCongrats = document.getElementById('second-congrats');
+        const wordGame = document.getElementById('word-game');
+        const wordFeedback = document.getElementById('word-feedback');
+        const correctWordMessage = document.getElementById('correct-word-message');
+        const finalHeart = document.getElementById('final-heart');
+
+        // Старт
+        introMessage.classList.add('visible');
+        setTimeout(() => {
+            introMessage.classList.remove('visible');
+            setTimeout(() => {
+                tapPrompt.classList.add('visible');
+                document.body.addEventListener('click', handleTap, { once: true });
+            }, 1000);
+        }, 5000);
+
+        function handleTap() {
+            tapPrompt.classList.remove('visible');
+            setTimeout(() => numberGame.classList.remove('hidden'), 1000);
+        }
+
+        // Игра с числами
+        document.querySelectorAll('.number-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.value === '18') {
+                    correctNumberMessage.classList.add('visible');
+                    numberGame.classList.add('hidden');
+                    setTimeout(() => {
+                        correctNumberMessage.classList.remove('visible');
+                        setTimeout(showFirstCongrats, 1000);
+                    }, 5000);
+                } else {
+                    btn.classList.add('wrong');
+                    numberFeedback.textContent = 'Не-а, подумай ещё, моя хорошая 😘';
+                    numberFeedback.classList.add('visible');
+                    setTimeout(() => {
+                        btn.classList.remove('wrong');
+                        numberFeedback.classList.remove('visible');
+                        numberFeedback.textContent = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Первое длинное поздравление (по словам)
+        function showFirstCongrats() {
+            const text = "Маша, поздравляю тебя с днём рождения!\nЭто особенный день для тебя и для твоих родных.\nТебе исполняется сегодня 18 лет)\nТы уже очень взрослая девочка и теперь сама принимаешь каждое своё решение ❤️\nP.S. остальные слова — в письме)";
+            firstCongrats.textContent = '';
+            firstCongrats.classList.remove('hidden');
+            firstCongrats.classList.add('visible');
+
+            const words = text.split(' ');
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < words.length) {
+                    firstCongrats.textContent += words[i] + ' ';
+                    if (words[i].includes('\n')) firstCongrats.innerHTML += '<br>';
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    createParticles('flower', 35); // Цветочки только здесь
+                    setTimeout(() => {
+                        firstCongrats.classList.remove('visible');
+                        setTimeout(() => {
+                            firstCongrats.classList.add('hidden');
+                            showSecondCongrats();
+                        }, 1000);
+                    }, 15000);
+                }
+            }, 250);
+        }
+
+        // Второе поздравление
+        function showSecondCongrats() {
+            secondCongrats.classList.remove('hidden');
+            secondCongrats.classList.add('visible');
+            setTimeout(() => {
+                secondCongrats.classList.remove('visible');
+                setTimeout(() => {
+                    secondCongrats.classList.add('hidden');
+                    startWordGame();
+                }, 1000);
+            }, 15000);
+        }
+
+        // Игра со словом
+        function startWordGame() {
+            wordGame.classList.remove('hidden');
+            const letters = ['Ш', 'Ц', 'Р', 'А', 'З', 'М', 'Я'];
+            const target = 'МАША';
+            const lettersDiv = document.getElementById('letters');
+            const slotsDiv = document.getElementById('slots');
+
+            // Слоты
+            for (let i = 0; i < 4; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot');
+                slotsDiv.appendChild(slot);
+            }
+
+            const slots = document.querySelectorAll('.slot');
+
+            // Буквы
+            letters.forEach(letter => {
+                const el = document.createElement('div');
+                el.classList.add('letter');
+                el.textContent = letter;
+                el.draggable = true;
+                lettersDiv.appendChild(el);
+
+                el.addEventListener('dragstart', e => e.dataTransfer.setData('text', letter));
+            });
+
+            // Drag & drop
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', e => e.preventDefault());
+                slot.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const letter = e.dataTransfer.getData('text');
+                    if (!slot.textContent) {
+                        slot.textContent = letter;
+                        slot.classList.add('filled');
+                    }
+                });
+            });
+
+            // Кнопка проверки
+            document.getElementById('check-word').onclick = () => {
+                let guessed = '';
+                slots.forEach(s => guessed += s.textContent || '_');
+                if (guessed === target) {
+                    correctWordMessage.classList.add('visible');
+                    wordGame.classList.add('hidden');
+                    setTimeout(() => {
+                        correctWordMessage.classList.remove('visible');
+                        setTimeout(() => {
+                            finalHeart.classList.remove('hidden');
+                            finalHeart.classList.add('visible');
+                        }, 1000);
+                    }, 5000);
+                } else {
+                    wordFeedback.textContent = 'Не совсем, солнышко... Попробуй ещё разок 💕';
+                    wordFeedback.classList.add('visible');
+                    setTimeout(() => {
+                        wordFeedback.classList.remove('visible');
+                        wordFeedback.textContent = '';
+                        // Сброс слотов
+                        slots.forEach(s => {
+                            s.textContent = '';
+                            s.classList.remove('filled');
+                        });
+                    }, 2500);
+                }
+            };
+        }
+    </script>
+</body>
+</html>
