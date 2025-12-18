@@ -1,281 +1,366 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Для Маши ❤️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поздравительная Открытка</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #ffebee; /* Светлый розовый фон */
+            font-family: 'Arial', sans-serif;
+            color: #d32f2f; /* Красный цвет текста */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            position: relative;
+        }
 
-<style>
-body {
-  margin: 0;
-  background: #fff0f5;
-  font-family: "Georgia", serif;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+        #container {
+            position: relative;
+            z-index: 2;
+            max-width: 80%;
+        }
 
-#app {
-  z-index: 2;
-  padding: 20px;
-  max-width: 600px;
-}
+        .message {
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            white-space: pre-wrap;
+        }
 
-.text {
-  color: #ff2e63;
-  font-size: 24px;
-  line-height: 1.6;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
+        .message.visible {
+            opacity: 1;
+        }
 
-.big {
-  font-size: 30px;
-  font-weight: bold;
-}
+        .hidden {
+            display: none;
+        }
 
-.btn {
-  margin-top: 25px;
-  padding: 14px 28px;
-  border-radius: 18px;
-  border: 2px solid #ff2e63;
-  background: white;
-  color: #ff2e63;
-  font-size: 20px;
-  cursor: pointer;
-  transition: .3s;
-}
+        /* Анимация для цветочков и сердечек */
+        .particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-size: contain;
+            opacity: 0.6;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-.btn:hover {
-  background: #ff2e63;
-  color: white;
-}
+        /* Кнопки для чисел */
+        .number-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
 
-.buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 25px;
-}
+        .number-button {
+            padding: 15px 30px;
+            font-size: 28px;
+            background-color: #f48fb1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-.num {
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
-  border: 2px solid #ff2e63;
-  background: white;
-  color: #ff2e63;
-  font-size: 24px;
-  line-height: 70px;
-  cursor: pointer;
-  transition: .3s;
-}
+        .number-button.wrong {
+            background-color: red;
+        }
 
-.num.wrong {
-  background: #ff6b6b;
-  color: white;
-}
+        /* Для игры в слово */
+        #word-game {
+            margin-top: 20px;
+        }
 
-.num.correct {
-  background: #4cd137;
-  color: white;
-}
+        .letter-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
 
-.heart {
-  position: absolute;
-  top: -40px;
-  font-size: 24px;
-  opacity: 0.6;
-  animation: fall linear infinite;
-}
+        .letter {
+            width: 50px;
+            height: 50px;
+            background-color: #f48fb1;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+            cursor: grab;
+            border-radius: 5px;
+            user-select: none;
+        }
 
-@keyframes fall {
-  from { transform: translateY(0); }
-  to { transform: translateY(120vh); }
-}
+        .word-slots {
+            display: flex;
+            justify-content: center;
+        }
 
-.word-box {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
-}
+        .slot {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed #d32f2f;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #d32f2f;
+            border-radius: 5px;
+        }
 
-.slot {
-  width: 55px;
-  height: 55px;
-  border: 2px dashed #ff2e63;
-  border-radius: 12px;
-  font-size: 30px;
-  line-height: 55px;
-  color: #ff2e63;
-}
+        .filled {
+            border: 2px solid #d32f2f;
+            background-color: #ffebee;
+        }
 
-.letters {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
+        /* Большое сердце в конце */
+        #final-heart {
+            font-size: 200px;
+            color: red;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
 
-.letter {
-  width: 55px;
-  height: 55px;
-  border-radius: 12px;
-  border: 2px solid #ff2e63;
-  background: white;
-  color: #ff2e63;
-  font-size: 30px;
-  line-height: 55px;
-  cursor: pointer;
-}
-
-#bigHeart {
-  font-size: 120px;
-  opacity: 0;
-  transition: opacity 2s ease;
-}
-</style>
+        #final-heart.visible {
+            opacity: 1;
+        }
+    </style>
 </head>
-
 <body>
-<div id="app"></div>
+    <div id="container">
+        <div id="intro-message" class="message">Это поздравление для тебя, Маша)</div>
+        <div id="tap-prompt" class="message hidden">нажми в любую точку экрана</div>
+        <div id="number-game" class="hidden">
+            <div class="message">Угадай правильное число</div>
+            <div class="number-buttons">
+                <button class="number-button" data-value="100">100</button>
+                <button class="number-button" data-value="6">6</button>
+                <button class="number-button" data-value="18">18</button>
+                <button class="number-button" data-value="78">78</button>
+            </div><div id="number-feedback" class="message" style="font-size: 20px; margin-top: 10px;"></div>
+        </div>
+        <div id="correct-number-message" class="message hidden">Да, ты абсолютно права, именно число 18 является верным выбором )</div>
+        <div id="first-congrats" class="message hidden"></div>
+        <div id="second-congrats" class="message hidden">Маша, спасибо тебе за всё, ты очень хорошая девочка, я тебя очень сильно люблю❤️</div>
+        <div id="word-game" class="hidden">
+            <div class="message">Угадай слово</div>
+            <div class="letter-options" id="letters"></div>
+            <div class="word-slots" id="slots"></div>
+            <div id="word-feedback" class="message" style="font-size: 20px; margin-top: 10px;"></div>
+        </div>
+        <div id="correct-word-message" class="message hidden">Да, ты права Маша)</div>
+        <div id="final-heart" class="hidden">❤️</div>
+    </div>
 
-<script>
-const app = document.getElementById("app");
-const wait = ms => new Promise(r => setTimeout(r, ms));
+    <script>
+        // Функция для анимации частиц (цветочки или сердечки)
+        function createParticles(type, count) {
+            const container = document.body;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = ${Math.random() * 100}vw;
+                particle.style.top = ${-20}px; // Начать сверху
+                particle.style.animation = fall ${Math.random() * 5 + 5}s linear infinite;
+                particle.style.backgroundImage = type === 'flower' ? 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'40\' fill=\'pink\'/%3E%3C/svg%3E")' : 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Cpath d=\'M50 90 C20 60 0 30 50 10 C100 30 80 60 50 90\' fill=\'red\'/%3E%3C/svg%3E")';
+                container.appendChild(particle);
 
-// фоновые сердечки
-setInterval(() => {
-  const h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = "❤️";
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.animationDuration = 5 + Math.random() * 4 + "s";
-  document.body.appendChild(h);
-  setTimeout(() => h.remove(), 9000);
-}, 600);
-
-async function showText(text, big = false, withButton = false) {
-  app.innerHTML = "";
-  const t = document.createElement("div");
-  t.className = "text" + (big ? " big" : "");
-  t.innerHTML = text;
-  app.appendChild(t);
-  await wait(100);
-  t.style.opacity = 1;
-
-  if (withButton) {
-    const b = document.createElement("button");
-    b.className = "btn";
-    b.innerText = "Продолжить";
-    app.appendChild(b);
-    return new Promise(resolve => b.onclick = resolve);
-  }
-}
-
-async function numberGame() {
-  await showText("Угадай правильное число 💭", true);
-
-  const nums = [100, 6, 18, 78];
-  const box = document.createElement("div");
-  box.className = "buttons";
-  app.appendChild(box);
-
-  return new Promise(resolve => {
-    nums.forEach(n => {
-      const el = document.createElement("div");
-      el.className = "num";
-      el.innerText = n;
-      el.onclick = async () => {
-        if (n === 18) {
-          el.classList.add("correct");
-          await showText("Да, ты абсолютно права ❤️ Именно 18 — верный выбор!");
-          await wait(2500);
-          resolve();
-        } else {
-          el.classList.add("wrong");
-          setTimeout(() => el.classList.remove("wrong"), 800);
+                // Анимация падения
+                const style = document.createElement('style');
+                style.innerHTML = @keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(120vh) rotate(${Math.random() * 360}deg); } };
+                document.head.appendChild(style);
+            }
         }
-      };
-      box.appendChild(el);
-    });
-  });
-}
 
-async function mainText() {
-  const text1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";await typeText(text1);
-  await wait(15000);
+        // Запустить сердечки сразу и на протяжении всего
+        createParticles('heart', 20); // Сердечки всегда
 
-  const text2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
-  await typeText(text2, true);
-  await wait(15000);
-}
+        // Логика для последовательности
+        const introMessage = document.getElementById('intro-message');
+        const tapPrompt = document.getElementById('tap-prompt');
+        const numberGame = document.getElementById('number-game');
+        const correctNumberMessage = document.getElementById('correct-number-message');
+        const firstCongrats = document.getElementById('first-congrats');
+        const secondCongrats = document.getElementById('second-congrats');
+        const wordGame = document.getElementById('word-game');
+        const correctWordMessage = document.getElementById('correct-word-message');
+        const finalHeart = document.getElementById('final-heart');
 
-async function typeText(text, big=false) {
-  app.innerHTML = "";
-  const el = document.createElement("div");
-  el.className = "text" + (big ? " big" : "");
-  el.style.opacity = 1;
-  app.appendChild(el);
+        // Показать intro на 5 секунд
+        introMessage.classList.add('visible');
+        setTimeout(() => {
+            introMessage.classList.remove('visible');
+            setTimeout(() => {
+                tapPrompt.classList.add('visible');
+                document.body.addEventListener('click', handleTap, { once: true });
+            }, 1000);
+        }, 5000);
 
-  for (let word of text.split(" ")) {
-    el.innerHTML += word + " ";
-    await wait(220);
-  }
-}
-
-async function wordGame() {
-  await showText("Угадай слово 💌", true);
-
-  const word = "МАША";
-  const letters = ["Ш","Ц","Р","А","З","М","Я"];
-
-  app.innerHTML += `
-    <div class="word-box">${"<div class='slot'></div>".repeat(5)}</div>
-    <div class="letters"></div>
-  `;
-
-  const slots = document.querySelectorAll(".slot");
-  const box = document.querySelector(".letters");
-
-  letters.forEach(l => {
-    const el = document.createElement("div");
-    el.className = "letter";
-    el.innerText = l;
-    el.onclick = () => {
-      for (let s of slots) {
-        if (!s.innerText) {
-          s.innerText = l;
-          break;
+        // Обработка тапа для запуска игры с числами
+        function handleTap() {
+            tapPrompt.classList.remove('visible');
+            setTimeout(() => {
+                numberGame.classList.remove('hidden');
+            }, 1000);
         }
-      }
-      if ([...slots].map(s => s.innerText).join("") === word) finish();
-    };
-    box.appendChild(el);
-  });
-}
 
-async function finish() {
-  await showText("Да, ты права, Маша ❤️", true);
-  await wait(3000);
-  app.innerHTML = <div id="bigHeart">❤️</div>;
-  await wait(200);
-  document.getElementById("bigHeart").style.opacity = 1;
-}
+        // Логика для выбора числа
+        const numberButtons = document.querySelectorAll('.number-button');
+        const numberFeedback = document.getElementById('number-feedback');
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.dataset.value;if (value === '18') {
+                    numberFeedback.textContent = '';
+                    numberGame.classList.add('hidden');
+                    correctNumberMessage.classList.add('visible');
+                    setTimeout(() => {
+                        correctNumberMessage.classList.remove('visible');
+                        setTimeout(() => {
+                            showFirstCongrats();
+                        }, 1000);
+                    }, 3000); // Показать сообщение на 3 секунды
+                } else {
+                    button.classList.add('wrong');
+                    numberFeedback.textContent = 'нет, не верно )';
+                    setTimeout(() => {
+                        button.classList.remove('wrong');
+                        numberFeedback.textContent = '';
+                    }, 1000);
+                }
+            });
+        });
 
-async function start() {
-  await showText("Это поздравление для тебя, Маша ❤️", true, true);
-  await numberGame();
-  await mainText();
-  await wordGame();
-}
+        // Показать первое поздравление постепенно по словам
+        function showFirstCongrats() {
+            const text = "Маша, поздравляю тебя с днём рождения, это особенный день для тебя и для твоих родных, тебе исполняется сегодня 18 лет) ты очень взрослая уже девочка и теперь сама принимаешь каждое свое решение) P.S. остальные слова в письме).";
+            const words = text.split(' ');
+            firstCongrats.classList.remove('hidden');
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < words.length) {
+                    firstCongrats.textContent += words[index] + ' ';
+                    index++;
+                } else {
+                    clearInterval(interval);
+                    // Начать сыпать цветочки только здесь
+                    createParticles('flower', 30);
+                    setTimeout(() => {
+                        firstCongrats.classList.remove('visible');
+                        setTimeout(() => {
+                            firstCongrats.classList.add('hidden');
+                            showSecondCongrats();
+                        }, 1000);
+                    }, 15000); // 15 секунд
+                }
+            }, 200); // По слову каждые 200мс
+            firstCongrats.classList.add('visible');
+        }
 
-start();
-</script>
+        // Второе поздравление
+        function showSecondCongrats() {
+            secondCongrats.classList.add('visible');
+            secondCongrats.classList.remove('hidden');
+            setTimeout(() => {
+                secondCongrats.classList.remove('visible');
+                setTimeout(() => {
+                    secondCongrats.classList.add('hidden');
+                    startWordGame();
+                }, 1000);
+            }, 15000); // 15 секунд
+        }
+
+        // Игра в слово
+        function startWordGame() {
+            wordGame.classList.remove('hidden');
+            const letters = ['Ш', 'Ц', 'Р', 'А', 'З', 'М', 'Я'];
+            const targetWord = 'МАША';
+            const lettersContainer = document.getElementById('letters');
+            const slotsContainer = document.getElementById('slots');
+            const wordFeedback = document.getElementById('word-feedback');
+
+            // Создать слоты
+            for (let i = 0; i < targetWord.length; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot');
+                slotsContainer.appendChild(slot);
+            }
+
+            // Создать буквы
+            letters.forEach(letter => {
+                const letterElem = document.createElement('div');
+                letterElem.classList.add('letter');
+                letterElem.textContent = letter;
+                letterElem.draggable = true;
+                lettersContainer.appendChild(letterElem);
+
+                letterElem.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text', letter);
+                });
+            });
+
+            // Обработка дропа в слоты
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach(slot => {
+                slot.addEventListener('dragover', (e) => {e.preventDefault();
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    const letter = e.dataTransfer.getData('text');
+                    if (!slot.textContent) { // Только если слот пуст
+                        slot.textContent = letter;
+                        slot.classList.add('filled');
+                    }
+                });
+            });
+
+            // Проверка слова
+            const checkButton = document.createElement('button');
+            checkButton.textContent = 'Проверить';
+            checkButton.style.marginTop = '20px';
+            checkButton.classList.add('number-button');
+            wordGame.appendChild(checkButton);
+
+            checkButton.addEventListener('click', () => {
+                let guessedWord = '';
+                slots.forEach(slot => {
+                    guessedWord += slot.textContent || '';
+                });
+                if (guessedWord === targetWord) {
+                    wordFeedback.textContent = '';
+                    wordGame.classList.add('hidden');
+                    correctWordMessage.classList.add('visible');
+                    setTimeout(() => {
+                        correctWordMessage.classList.remove('visible');
+                        setTimeout(() => {
+                            finalHeart.classList.remove('hidden');
+                            finalHeart.classList.add('visible');
+                        }, 1000);
+                    }, 3000); // 3 секунды на сообщение
+                } else {
+                    wordFeedback.textContent = 'Нет, не верно. Попробуй снова!';
+                    // Сброс слотов через 1 секунду
+                    setTimeout(() => {
+                        slots.forEach(slot => {
+                            slot.textContent = '';
+                            slot.classList.remove('filled');
+                        });
+                        wordFeedback.textContent = '';
+                    }, 1000);
+                }
+            });
+        }
+    </script>
 </body>
 </html>
