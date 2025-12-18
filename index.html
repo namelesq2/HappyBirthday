@@ -7,250 +7,272 @@
 
 <style>
 body {
-    margin: 0;
-    background: #fff0f5;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Georgia, serif;
-    text-align: center;
+  margin: 0;
+  background: #fff0f5;
+  font-family: "Georgia", serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-#container {
-    z-index: 2;
-    padding: 20px;
+#app {
+  z-index: 2;
+  padding: 20px;
+  max-width: 600px;
 }
 
 .text {
-    color: #ff2e63;
-    font-size: 26px;
-    line-height: 1.6;
-    opacity: 0;
-    transition: opacity 1s ease;
+  color: #ff2e63;
+  font-size: 24px;
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
 .big {
-    font-size: 32px;
-    font-weight: bold;
-}
-
-.buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 25px;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .btn {
-    padding: 15px 22px;
-    font-size: 22px;
-    border-radius: 15px;
-    background: white;
-    border: 2px solid #ff2e63;
-    color: #ff2e63;
-    cursor: pointer;
-    transition: all .3s;
+  margin-top: 25px;
+  padding: 14px 28px;
+  border-radius: 18px;
+  border: 2px solid #ff2e63;
+  background: white;
+  color: #ff2e63;
+  font-size: 20px;
+  cursor: pointer;
+  transition: .3s;
 }
 
-.btn.wrong {
-    background: #ff6b6b;
-    color: white;
+.btn:hover {
+  background: #ff2e63;
+  color: white;
 }
 
-.btn.correct {
-    background: #4cd137;
-    color: white;
+.buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+.num {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  border: 2px solid #ff2e63;
+  background: white;
+  color: #ff2e63;
+  font-size: 24px;
+  line-height: 70px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.num.wrong {
+  background: #ff6b6b;
+  color: white;
+}
+
+.num.correct {
+  background: #4cd137;
+  color: white;
 }
 
 .heart {
-    position: absolute;
-    top: -40px;
-    font-size: 26px;
-    animation: fall 6s linear infinite;
-    opacity: .6;
+  position: absolute;
+  top: -40px;
+  font-size: 24px;
+  opacity: 0.6;
+  animation: fall linear infinite;
 }
 
 @keyframes fall {
-    from { transform: translateY(0); }
-    to { transform: translateY(120vh); }
+  from { transform: translateY(0); }
+  to { transform: translateY(120vh); }
 }
 
 .word-box {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
 }
 
 .slot {
-    width: 55px;
-    height: 55px;
-    border: 2px dashed #ff2e63;
-    border-radius: 10px;
-    font-size: 30px;
-    line-height: 55px;
-    color: #ff2e63;
+  width: 55px;
+  height: 55px;
+  border: 2px dashed #ff2e63;
+  border-radius: 12px;
+  font-size: 30px;
+  line-height: 55px;
+  color: #ff2e63;
 }
 
 .letters {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .letter {
-    width: 55px;
-    height: 55px;
-    background: white;
-    border-radius: 10px;
-    border: 2px solid #ff2e63;
-    font-size: 30px;
-    line-height: 55px;
-    color: #ff2e63;
-    cursor: pointer;
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  border: 2px solid #ff2e63;
+  background: white;
+  color: #ff2e63;
+  font-size: 30px;
+  line-height: 55px;
+  cursor: pointer;
 }
 
 #bigHeart {
-    font-size: 120px;
-    opacity: 0;
-    transition: opacity 2s ease;
+  font-size: 120px;
+  opacity: 0;
+  transition: opacity 2s ease;
 }
 </style>
 </head>
 
 <body>
-<div id="container"></div>
+<div id="app"></div>
 
 <script>
-const container = document.getElementById("container");
+const app = document.getElementById("app");
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 // фоновые сердечки
 setInterval(() => {
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.innerHTML = "❤️";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.animationDuration = 4 + Math.random() * 4 + "s";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 8000);
-}, 500);
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = "❤️";
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.animationDuration = 5 + Math.random() * 4 + "s";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 9000);
+}, 600);
 
-async function showText(text, big=false) {
-    container.innerHTML = "";
-    const el = document.createElement("div");
-    el.className = "text" + (big ? " big" : "");
-    el.innerHTML = text;
-    container.appendChild(el);
-    await wait(100);
-    el.style.opacity = 1;
-    return el;
+async function showText(text, big = false, withButton = false) {
+  app.innerHTML = "";
+  const t = document.createElement("div");
+  t.className = "text" + (big ? " big" : "");
+  t.innerHTML = text;
+  app.appendChild(t);
+  await wait(100);
+  t.style.opacity = 1;
+
+  if (withButton) {
+    const b = document.createElement("button");
+    b.className = "btn";
+    b.innerText = "Продолжить";
+    app.appendChild(b);
+    return new Promise(resolve => b.onclick = resolve);
+  }
 }
 
 async function numberGame() {
-    await showText("Угадай правильное число 💭", true);
+  await showText("Угадай правильное число 💭", true);
 
-    const nums = [100, 6, 18, 78];
-    const box = document.createElement("div");
-    box.className = "buttons";
-    container.appendChild(box);
+  const nums = [100, 6, 18, 78];
+  const box = document.createElement("div");
+  box.className = "buttons";
+  app.appendChild(box);
 
-    return new Promise(resolve => {
-        nums.forEach(n => {
-            const b = document.createElement("div");
-            b.className = "btn";
-            b.innerText = n;
-            b.onclick = async () => {
-                if (n === 18) {
-                    b.classList.add("correct");
-                    await showText("Да, ты абсолютно права 💖 Именно 18 — верный выбор!");
-                    await wait(2500);
-                    resolve();
-                } else {
-                    b.classList.add("wrong");
-                }
-            };
-            box.appendChild(b);
-        });
+  return new Promise(resolve => {
+    nums.forEach(n => {
+      const el = document.createElement("div");
+      el.className = "num";
+      el.innerText = n;
+      el.onclick = async () => {
+        if (n === 18) {
+          el.classList.add("correct");
+          await showText("Да, ты абсолютно права ❤️ Именно 18 — верный выбор!");
+          await wait(2500);
+          resolve();
+        } else {
+          el.classList.add("wrong");
+          setTimeout(() => el.classList.remove("wrong"), 800);
+        }
+      };
+      box.appendChild(el);
     });
+  });
 }
 
 async function mainText() {
-    const t1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и для твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";
-    await typeByWords(t1);
-    await wait(15000);
+  const text1 = "Маша, поздравляю тебя с днём рождения. Это особенный день для тебя и твоих родных. Сегодня тебе исполняется 18 лет. Ты уже очень взрослая девочка и теперь сама принимаешь каждое своё решение.";await typeText(text1);
+  await wait(15000);
 
-    const t2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
-    await typeByWords(t2, true);
-    await wait(15000);
+  const text2 = "Маша, спасибо тебе за всё. Ты очень хорошая девочка, и я тебя очень сильно люблю ❤️";
+  await typeText(text2, true);
+  await wait(15000);
 }
 
-async function typeByWords(text, big=false) {container.innerHTML = "";
-    const el = document.createElement("div");
-    el.className = "text" + (big ? " big" : "");
-    container.appendChild(el);
-    el.style.opacity = 1;
+async function typeText(text, big=false) {
+  app.innerHTML = "";
+  const el = document.createElement("div");
+  el.className = "text" + (big ? " big" : "");
+  el.style.opacity = 1;
+  app.appendChild(el);
 
-    for (let w of text.split(" ")) {
-        el.innerHTML += w + " ";
-        await wait(250);
-    }
+  for (let word of text.split(" ")) {
+    el.innerHTML += word + " ";
+    await wait(220);
+  }
 }
 
 async function wordGame() {
-    await showText("Угадай слово 💌", true);
+  await showText("Угадай слово 💌", true);
 
-    const word = "МАША";
-    const letters = ["Ш","Ц","Р","А","З","М","Я"];
+  const word = "МАША";
+  const letters = ["Ш","Ц","Р","А","З","М","Я"];
 
-    container.innerHTML += `
-        <div class="word-box">${"<div class='slot'></div>".repeat(5)}</div>
-        <div class="letters"></div>
-    `;
+  app.innerHTML += `
+    <div class="word-box">${"<div class='slot'></div>".repeat(5)}</div>
+    <div class="letters"></div>
+  `;
 
-    const slots = document.querySelectorAll(".slot");
-    const box = document.querySelector(".letters");
+  const slots = document.querySelectorAll(".slot");
+  const box = document.querySelector(".letters");
 
-    letters.forEach(l => {
-        const el = document.createElement("div");
-        el.className = "letter";
-        el.innerText = l;
-        el.onclick = () => {
-            for (let s of slots) {
-                if (!s.innerText) {
-                    s.innerText = l;
-                    break;
-                }
-            }
-            if ([...slots].map(s=>s.innerText).join("") === word) finish();
-        };
-        box.appendChild(el);
-    });
+  letters.forEach(l => {
+    const el = document.createElement("div");
+    el.className = "letter";
+    el.innerText = l;
+    el.onclick = () => {
+      for (let s of slots) {
+        if (!s.innerText) {
+          s.innerText = l;
+          break;
+        }
+      }
+      if ([...slots].map(s => s.innerText).join("") === word) finish();
+    };
+    box.appendChild(el);
+  });
 }
 
 async function finish() {
-    await showText("Да, ты права, Маша ❤️", true);
-    await wait(3000);
-    container.innerHTML = <div id="bigHeart">❤️</div>;
-    await wait(200);
-    document.getElementById("bigHeart").style.opacity = 1;
+  await showText("Да, ты права, Маша ❤️", true);
+  await wait(3000);
+  app.innerHTML = <div id="bigHeart">❤️</div>;
+  await wait(200);
+  document.getElementById("bigHeart").style.opacity = 1;
 }
 
 async function start() {
-    await showText("Это поздравление для тебя, Маша ❤️", true);
-    await wait(5000);
-    await showText("Нажми в любую точку экрана");
-
-    document.body.onclick = async () => {
-        document.body.onclick = null;
-        await numberGame();
-        await mainText();
-        await wordGame();
-    };
+  await showText("Это поздравление для тебя, Маша ❤️", true, true);
+  await numberGame();
+  await mainText();
+  await wordGame();
 }
 
 start();
