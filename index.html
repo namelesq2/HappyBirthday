@@ -161,7 +161,7 @@
 
         <div id="tap-prompt" class="message hidden">Нажми в любую точку экрана, солнышко ✨</div>
 
-        <div id="number-game" class="hidden"><div class="message">Угадай, какое число сегодня самое важное для тебя? 💕</div>
+        <div id="number-game" class="hidden"><div id="number-title" class="message">Угадай, какое число сегодня самое важное для тебя? 💕</div>
             <div class="number-buttons">
                 <button class="number-button" data-value="100">100</button>
                 <button class="number-button" data-value="6">6</button>
@@ -185,7 +185,7 @@
         </div>
 
         <div id="word-game" class="hidden">
-            <div class="message">А теперь собери самое важное для меня слово из букв... 💌</div>
+            <div id="word-title" class="message">А теперь собери самое важное для меня слово из букв... 💌</div>
             <div class="letter-options" id="letters"></div>
             <div class="word-slots" id="slots"></div>
             <button id="check-word" class="number-button" style="margin-top: 30px; padding: 15px 40px; font-size: 28px;">Проверить</button>
@@ -221,11 +221,13 @@
         const intro = document.getElementById('intro-message');
         const tapPrompt = document.getElementById('tap-prompt');
         const numberGame = document.getElementById('number-game');
+        const numberTitle = document.getElementById('number-title');
         const numberFeedback = document.getElementById('number-feedback');
         const correctNumber = document.getElementById('correct-number-message');
         const firstCongrats = document.getElementById('first-congrats');
         const secondCongrats = document.getElementById('second-congrats');
         const wordGame = document.getElementById('word-game');
+        const wordTitle = document.getElementById('word-title');
         const wordFeedback = document.getElementById('word-feedback');
         const correctWord = document.getElementById('correct-word-message');
         const finalHeart = document.getElementById('final-heart');
@@ -239,20 +241,20 @@
                 tapPrompt.classList.add('visible');
                 document.body.onclick = startNumberGame;
             }, 1500);
-        }, 5000);
-
-        function startNumberGame() {
+        }, 5000);function startNumberGame() {
             tapPrompt.classList.remove('visible');
             setTimeout(() => {
-                tapPrompt.classList.add('hidden');numberGame.classList.remove('hidden');
+                tapPrompt.classList.add('hidden');
+                numberGame.classList.remove('hidden');
+                numberTitle.classList.add('visible'); // Появление текста перед числами
             }, 1500);
         }
 
-        // Игра с числами — ИСПРАВЛЕНО: полное исчезновение блока
+        // Игра с числами
         document.querySelectorAll('.number-button').forEach(btn => {
             btn.onclick = () => {
                 if (btn.dataset.value === '18') {
-                    numberGame.style.display = 'none'; // Полное скрытие
+                    numberGame.style.display = 'none'; // Полностью убираем блок
                     correctNumber.classList.remove('hidden');
                     correctNumber.classList.add('visible');
                     setTimeout(showFirstCongrats, 5000);
@@ -298,6 +300,7 @@
                                     setTimeout(() => {
                                         secondCongrats.classList.add('hidden');
                                         wordGame.classList.remove('hidden');
+                                        wordTitle.classList.add('visible'); // Появление текста перед словом
                                     }, 1500);
                                 }, 15000);
                             }, 1500);
@@ -333,7 +336,8 @@
             slot.addEventListener('dragover', e => e.preventDefault());
             slot.addEventListener('drop', e => {
                 e.preventDefault();
-                const letter = e.dataTransfer.getData('text');if (!slot.textContent) {
+                const letter = e.dataTransfer.getData('text');
+                if (!slot.textContent) {
                     slot.textContent = letter;
                     slot.classList.add('filled');
                 }
@@ -343,7 +347,7 @@
         document.getElementById('check-word').onclick = () => {
             const guessed = slots.map(s => s.textContent || '').join('');
             if (guessed === 'МАША') {
-                wordGame.style.display = 'none'; // Можно добавить и здесь для чистоты
+                wordGame.style.display = 'none';
                 correctWord.classList.remove('hidden');
                 correctWord.classList.add('visible');
                 setTimeout(() => {
